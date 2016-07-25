@@ -89,5 +89,7 @@ $route['AddWorkGroupDet'] = 'c_admin/AddWorkGroupDet';
 
 $route['AddCompProfile'] = 'c_admin/AddCompProfile';
 
+$route['SendSms'] = 'c_admin/sendSms';
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

@@ -23,6 +23,8 @@
  * @category	Loader
  * @link		http://codeigniter.com/user_guide/libraries/loader.html
  */
+
+// test commite
 class MY_Controller extends CI_Controller
 {
 	var $data=array();
