@@ -1,0 +1,4 @@
+[11-Jul-2016 15:06:16 Asia/Jerusalem] PHP Fatal error:  Call to a member function result() on null in /home/newline/public_html/HR_v1/application/models/m_arch.php on line 59
+[11-Jul-2016 15:06:35 Asia/Jerusalem] PHP Fatal error:  Call to undefined method CI_DB_mysql_result::get() in /home/newline/public_html/HR_v1/application/models/m_arch.php on line 59
+[11-Jul-2016 15:07:23 Asia/Jerusalem] PHP Fatal error:  Call to undefined method CI_DB_mysql_result::get() in /home/newline/public_html/HR_v1/application/models/m_arch.php on line 59
+[24-Jul-2016 11:43:06 Asia/Jerusalem] PHP Fatal error:  Call to undefined method m_emp::getView() in /home/newline/public_html/HR_v1/application/controllers/c_admin.php on line 548
