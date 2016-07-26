@@ -438,7 +438,6 @@ class c_admin extends MY_Controller {
 		echo json_encode($this->data);
 	}
 	
-	
 	public function UpdateArch(){
 		if($this->hasPermission(19)){
 			$this->load->model('m_arch');
@@ -484,8 +483,6 @@ class c_admin extends MY_Controller {
 		echo json_encode($this->data);}
 	}
 
-
-	
 	/************************/
 	
 	/*********************الموظفين************************/
@@ -561,7 +558,6 @@ class c_admin extends MY_Controller {
 			redirect("/","refresh");
 
 	}
-
 
 	public function UpdateEmployee(){
 		if($this->hasPermission(22)){
@@ -675,7 +671,152 @@ class c_admin extends MY_Controller {
 
 	}
 
+	public function EmpAttendance()
+	{
+		if($this->hasPermission(22)) {
 
+			$this->load->model('m_emp');
+			$this->data['empData']=$this->m_emp->getView();
+			$dates = array("Monday" => 'الإثنين', "Tuesday" => 'الثلاثاء', "Wednesday" => 'الأربعاء', "Thursday" => 'الخميس', "Friday" => 'الجمعة', "Saturday" => 'السبت', "Sunday" => 'الأحد');
+			$end_of_month = date("t", strtotime(date('Y-m-d')));
+			$pk_i_id=$this->uri->segment(2);
+			$this->load->model("m_attendance");
+			$this->data['selectedempData']=$this->m_emp->getView($pk_i_id);
+
+			$EmpLog = array();
+			for ($i = 1; $i <= $end_of_month; $i++) {
+				$today = $this->m_attendance->get_attendance($pk_i_id, date('Y'), strlen(date('m')) == 1 ? '0' . date('m') : date('m'), strlen($i) == 1 ? '0' . $i : $i);
+				if (sizeof($today) > 0) {
+					$cat['dayname'] = $dates[$today[0]->dayname];
+					$cat['dt_today'] = date('Y') . "/" . date('m') . "/" . $i;
+					$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+					$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+					$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+					$cat['s_name_ar'] = $today[0]->s_name_ar;
+					$cat['s_type'] = 1;
+					$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+					array_push($EmpLog, $cat);
+				} else {
+					$today = $this->m_attendance->get_vacation($pk_i_id, date('Y'), strlen(date('m')) == 1 ? '0' . date('m') : date('m'), strlen($i) == 1 ? '0' . $i : $i);
+					if (sizeof($today) > 0) {
+						$cat['dayname'] = $dates[$today[0]->dayname];
+						$cat['dt_today'] = date('Y') . "/" . date('m') . "/" . $i;
+						$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+						$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+						$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+						$cat['s_name_ar'] = $today[0]->s_name_ar;
+						$cat['s_type'] = 2;
+						$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+						array_push($EmpLog, $cat);
+					} else {
+						$today = $this->m_attendance->get_annual_vacation(date('Y'), strlen(date('m')) == 1 ? '0' . date('m') : date('m'), strlen($i) == 1 ? '0' . $i : $i);
+						if (sizeof($today) > 0) {
+							$cat['dayname'] = $dates[$today[0]->dayname];
+							$cat['dt_today'] = date('Y') . "/" . date('m') . "/" . $i;
+							$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+							$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+							$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+							$cat['s_name_ar'] = $today[0]->s_name_ar;
+							$cat['s_type'] = 3;
+							$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+							array_push($EmpLog, $cat);
+						} else {
+							$cat['dayname'] = $dates[date("l", mktime(0, 0, 0, date('m'), $i, date('Y')))];
+							$cat['dt_today'] = date('Y') . "/" . date('m') . "/" . $i;
+							$cat['dt_entry_date'] = '00:00:00';
+							$cat['dt_leave_date'] = '00:00:00';
+							$cat['fk_i_extra_cd'] = -1;
+							$cat['s_name_ar'] = 'غير مدخل';
+							$cat['s_type'] = 4;
+							$cat['fk_i_source_cd'] = '';
+							array_push($EmpLog, $cat);
+						}
+					}
+				}
+			}
+
+			$this->data['attend'] = $EmpLog;
+			$this->data['subpage'] = 'adminCtrPnl/MonthAttendReport';
+			$this->load->view('index', $this->data);
+		}
+		else
+			redirect("EmployeeFilter","refresh");
+	}
+
+	public function AjaxEmpAttendance()
+	{
+		if($this->hasPermission(22)) {
+
+			$this->load->model('m_emp');
+			//$this->data['empData']=$this->m_emp->getView();
+			$dates = array("Monday" => 'الإثنين', "Tuesday" => 'الثلاثاء', "Wednesday" => 'الأربعاء', "Thursday" => 'الخميس', "Friday" => 'الجمعة', "Saturday" => 'السبت', "Sunday" => 'الأحد');
+
+			$pk_i_id=$this->input->post('i_emp_number');
+			$month=$this->input->post('selectedMonth');
+			$year=$this->input->post('selectedYear');
+			$this->load->model("m_attendance");
+			$this->data['selectedempData']=$this->m_emp->getView($pk_i_id);
+			$end_of_month = date("t", strtotime(date($year.'-'.$month.'-d')));
+			$EmpLog = array();
+			for ($i = 1; $i <= $end_of_month; $i++) {
+				$today = $this->m_attendance->get_attendance($pk_i_id, $year, strlen($month) == 1 ? '0' . $month : $month, strlen($i) == 1 ? '0' . $i : $i);
+				if (sizeof($today) > 0) {
+					$cat['dayname'] = $dates[$today[0]->dayname];
+					$cat['dt_today'] = $year . "/" . $month . "/" . $i;
+					$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+					$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+					$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+					$cat['s_name_ar'] = $today[0]->s_name_ar;
+					$cat['s_type'] = 1;
+					$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+					array_push($EmpLog, $cat);
+				} else {
+					$today = $this->m_attendance->get_vacation($pk_i_id, $year, strlen($month) == 1 ? '0' . $month :$month, strlen($i) == 1 ? '0' . $i : $i);
+					if (sizeof($today) > 0) {
+						$cat['dayname'] = $dates[$today[0]->dayname];
+						$cat['dt_today'] = $year . "/" . $month . "/" . $i;
+						$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+						$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+						$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+						$cat['s_name_ar'] = $today[0]->s_name_ar;
+						$cat['s_type'] = 2;
+						$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+						array_push($EmpLog, $cat);
+					} else {
+						$today = $this->m_attendance->get_annual_vacation($year, strlen($month) == 1 ? '0' . $month : $month, strlen($i) == 1 ? '0' . $i : $i);
+						if (sizeof($today) > 0) {
+							$cat['dayname'] = $dates[$today[0]->dayname];
+							$cat['dt_today'] = $year . "/" . $month . "/" . $i;
+							$cat['dt_entry_date'] = $today[0]->dt_entry_date;
+							$cat['dt_leave_date'] = $today[0]->dt_leave_date;
+							$cat['fk_i_extra_cd'] = $today[0]->fk_i_extra_cd;
+							$cat['s_name_ar'] = $today[0]->s_name_ar;
+							$cat['s_type'] = 3;
+							$cat['fk_i_source_cd'] = $today[0]->fk_i_source_cd == 1 ? 'ويب' : 'بصمة';
+							array_push($EmpLog, $cat);
+						} else {
+							$cat['dayname'] = $dates[date("l", mktime(0, 0, 0, $month, $i, $year))];
+							$cat['dt_today'] = $year . "/" . $month . "/" . $i;
+							$cat['dt_entry_date'] = '00:00:00';
+							$cat['dt_leave_date'] = '00:00:00';
+							$cat['fk_i_extra_cd'] = -1;
+							$cat['s_name_ar'] = 'غير مدخل';
+							$cat['s_type'] = 4;
+							$cat['fk_i_source_cd'] = '';
+							array_push($EmpLog, $cat);
+						}
+					}
+				}
+			}
+
+			$this->data['attend'] = $EmpLog;/*
+			$this->data['subpage'] = 'adminCtrPnl/MonthAttendReport';
+			$this->load->view('index', $this->data);*/
+			echo json_encode($this->data);
+		}
+		else
+			redirect("EmployeeFilter","refresh");
+	}
 	/*********************************************/
 
 	/*********************مجموعات العمل************************/

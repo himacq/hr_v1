@@ -80,7 +80,9 @@ $route['AddEmployee'] = 'c_admin/AddEmployee';
 $route['UpdateEmployee'] = 'c_admin/UpdateEmployee';
 $route['EmployeeFilter'] = 'c_admin/EmployeeFilter';
 $route['DeleteEmp'] = 'c_admin/DeleteEmp';
-$route['EditEmp/(:num)'] = 'c_admin/EditEmp/$1';
+$route['AjaxEmpAttendance'] = 'c_admin/AjaxEmpAttendance';
+$route['EmpAttendance(:any)'] = 'c_admin/EmpAttendance/$1';
+$route['EditEmp/(:any)'] = 'c_admin/EditEmp/$1';
 
 $route['WorkGroup'] = 'c_admin/WorkGroup';
 $route['AddWorkGroup'] = 'c_admin/AddWorkGroup';
@@ -89,6 +91,8 @@ $route['AddWorkGroupDet'] = 'c_admin/AddWorkGroupDet';
 
 $route['AddCompProfile'] = 'c_admin/AddCompProfile';
 
+
+/****************** Ibrahim Routs ************************/
 $route['SmsGroups'] = 'c_sms/groups';
 $route['AddSmsGroup'] = 'c_sms/add_group';
 
