@@ -55,6 +55,7 @@ class MY_Controller extends CI_Controller
 		if(sizeof($userdata)>0){
 			/*`pk_i_id`, `s_name_ar`, `s_name_en`, `fk_i_gender_cd`, `dt_dob_date`, `s_emp_image`, `s_place_of_birth`, `fk_i_mstatus_cd`, `s_emp_ssn`, `s_address`, `fk_i_city_cd`, `fk_i_emp_status`, `fk_i_nationality_cd`, `s_jawwal`, `s_tel`, `s_email`, `s_password`, `b_enabled`, `dt_join_date`, `i_create_by`, `dt_create_at`, `i_update_by`, `dt_update_at`, `i_delete_by`, `dt_detete_at*/
 			$userinfo['pk_i_id']=$userdata[0]->pk_i_id;
+			$userinfo['i_emp_number']=$userdata[0]->i_emp_number;
 			$userinfo['s_name_ar']=$userdata[0]->s_name_ar;
 			$userinfo['s_name_en']=$userdata[0]->s_name_en;
 			$userinfo['fk_i_gender_cd']=$userdata[0]->fk_i_gender_cd;

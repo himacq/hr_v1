@@ -38,7 +38,9 @@
                             <a href="<?php echo base_url()?>EditEmp/<?php echo $row->i_emp_number; ?>">
                                 <span class="fa fa-edit" title="تعديل" ></span>
                             </a>
-                            <span class="fa fa-history" title="السجل الوظيفي"id="<?php echo $row->i_emp_number;?>"></span>
+                            <a href="<?php echo base_url()?>EmpAttendance/<?php echo $row->i_emp_number; ?>">
+                                <span class="fa fa-history" title="السجل الوظيفي"id="<?php echo $row->i_emp_number;?>"></span>
+                            </a>
                             <span class="fa fa-calendar" title="الحضور و الإنصراف "id="<?php echo $row->i_emp_number;?>"></span>
                             <span class="fa fa-hotel" title="الإجازات"id="<?php echo $row->i_emp_number;?>"></span>
                         </td>
