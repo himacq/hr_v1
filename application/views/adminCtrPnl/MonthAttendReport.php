@@ -51,45 +51,7 @@
         </div>
         
     </div>
-   <!-- <div class="row m-b-20">
-            <div class="col-xs-7">
-                <div class="f-w-300">Market share</div>
-                <p>This week</p>
-            </div>
-            <div class="col-xs-5">
-                <div class="dropdown pull-right m-0">
-                    <a class="btn no-bg dropdown-toggle no-after" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-ellipsis-v"></i> 
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-scale from-right"> <a class="dropdown-item">This week</a>  <a class="dropdown-item">This month</a>  <a class="dropdown-item">This year</a>  <a class="dropdown-item">Today</a> 
-                    </div>
-                </div>
-                <button class="btn no-bg pull-right m-0"> <i class="fa fa-cog" id="icon-322"></i> 
-                </button>
-            </div>
-        </div>-->
-<!--        <div class="row">-->
-<!--            <div class="col-xs-12 col-lg-6">-->
-<!--                <div class="series-a-danger series-b-info series-c-success series-d-warning" style="height:250px">-->
-<!--                    <div id="analytics-pie-chart-4" class="ct-chart">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="col-xs-12 col-lg-6">-->
-<!--                <ul class="list-unstyled">-->
-<!--                    <li> <span class="label  AttendDay label-rounded color-white"> </span>  <span>حضور</span> -->
-<!--                    </li>-->
-<!--                    <li> <span class="label VacationDate label-rounded color-white"> </span>  <span>عطلة رسمية</span> -->
-<!--                    </li>-->
-<!--                    <li> <span class="label EmpVacationDate label-rounded color-white"> </span>  <span>إجازة موظف</span> -->
-<!--                    </li>-->
-<!--                    <li> <span class="label LateDay label-rounded color-white"> </span>  <span>أيام تأخير</span> -->
-<!--                    </li>-->
-<!--                    <li> <span class="label NotRegisteredDay label-rounded color-white"> </span>  <span>غير مدخل</span> -->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--        </div>-->
-    
+
     </div>
    <div class="row m-b-20">
     				<div class="col-xs-12">		
@@ -99,11 +61,11 @@
                                 <thead>
                                     <tr>
                                         <th>الإسم</th>
-                                        <th colspan="2" id="s_name_ar" ><?php echo $selectedempData[0]->s_name_ar ?></th>
+                                        <th colspan="2" id="name_ar" ><?php echo $selectedempData[0]->s_name_ar ?></th>
                                         <th>رقم الهوية</th>
-                                        <th id="s_emp_ssn"><?php echo $selectedempData[0]->s_emp_ssn ?></th>
+                                        <th id="emp_ssn"><?php echo $selectedempData[0]->s_emp_ssn ?></th>
                                         <th>الرقم الوظيفي</th>
-                                        <th id="i_emp_number"><?php echo $selectedempData[0]->i_emp_number ?></th>
+                                        <th id="emp_number"><?php echo $selectedempData[0]->i_emp_number ?></th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -177,8 +139,39 @@ chartistPieChart4() */
                         $(".alert-danger-outline").hide();
                         $(".alert-success-outline").show();
                         $("#successMsg").text(data.status.msg);
-                        $("#tr"+id).fadeOut();
-                        $("#tr"+id).remove();
+                        //console.log(data.selectedempData[0].s_name_ar)
+                        $("#name_ar").text(data.selectedempData[0].s_name_ar)
+                        $("#emp_ssn").text(data.selectedempData[0].s_emp_ssn)
+                        $("#emp_number").text(data.selectedempData[0].i_emp_number)
+                        $("#tblCntnt").html('');
+                        for(i=0;i<data.attend.length;i++){
+                            MyClass='';
+                            if(data.attend[i].dayname=="الجمعة" || data.attend[i].s_type==3){
+                                MyClass='VacationDate';
+                            }
+                            else if(data.attend[i].s_type==2){
+                                MyClass='EmpVacationDate';
+                            }
+                            else if(data.attend[i].s_type==1 && data.attend[i].fk_i_extra_cd==25){
+                                MyClass='LateDay';
+                            }
+                            else if(data.attend[i].s_type==1 ){
+                                MyClass='AttendDay';
+                            }
+                            else if(data.attend[i].s_type==4 ) {
+                                MyClass='NotRegisteredDay';
+                            }
+                            row='<tr class="'+MyClass+'">'
+                                +'<th scope="row">'+i+'</th>'
+                                +'<td>'+data.attend[i].dayname+'</td>'
+                                +'<td>'+data.attend[i].dt_today+'</td>'
+                                +'<td>'+data.attend[i].dt_entry_date+'</td>'
+                                +'<td>'+data.attend[i].dt_leave_date+'</td>'
+                                +'<td>'+data.attend[i].s_name_ar+'</td>'
+                                +'<td>'+data.attend[i].fk_i_source_cd+'</td>'
+                                +'</tr>';
+                            $("#tblCntnt").append(row);
+                        }
 
                     }
                     else {

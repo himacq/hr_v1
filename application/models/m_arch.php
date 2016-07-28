@@ -45,7 +45,15 @@ class m_arch extends CI_Model {
 		$res=$this->db->get();
 		return $res->result();
 	}
-	
+
+	function getArchDetails($id=0)
+	{
+		$this->db->select('CA.`pk_i_id` , CA.`s_name_ar` ArchName, CD.s_name_ar arch_type');
+		$this->db->from('`t_company_arch` CA');
+		$this->db->join('`t_const_details` CD','CD.pk_i_id = CA.fk_i_type_id');
+		$res=$this->db->get();
+		return $res->result();
+	}
 	function get_child($id=0)
     {
 		$this->db->select('*');

@@ -57,6 +57,17 @@ class m_emp extends CI_Model {
 		return $q->result();
 	}
 
+
+	function getButMe($id=0)
+	{
+		$this->db->select('*');
+		$this->db->from('main_emp_vw');
+		if($id>0)
+			$this->db->where("i_emp_number <> $id");
+		$q= $this->db->get();
+		return $q->result();
+	}
+
 	function getView($id=0)
 	{
 		$this->db->select('*');

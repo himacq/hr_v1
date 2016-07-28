@@ -75,7 +75,7 @@ $route['GetArchChild/(:num)'] = 'c_admin/GetArchChild/$1';
 $route['GetSingleArch'] = 'c_admin/GetSingleArch';
 $route['UpdateArch'] = 'c_admin/UpdateArch';
 
-$route['NewJobForEmp'] = 'c_admin/NewJobForEmp';
+$route['NewJobForEmp/(:any)'] = 'c_admin/NewJobForEmp/$1';
 $route['AddEmployee'] = 'c_admin/AddEmployee';
 $route['UpdateEmployee'] = 'c_admin/UpdateEmployee';
 $route['EmployeeFilter'] = 'c_admin/EmployeeFilter';
@@ -98,7 +98,7 @@ $route['AddSmsGroup'] = 'c_sms/add_group';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+//<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -137,61 +137,61 @@ $route['AddSmsGroup'] = 'c_sms/add_group';
 | in the URL cannot be matched to a valid route.
 |
 */
-
-$route['default_controller'] = "welcome";
-$route['ElecFingerPrint'] = "welcome";
-$route['404_override'] = 'welcome';
-
-
-$route['login'] = 'c_general/login';
-$route['AjaxLogin'] = 'c_general/AjaxLogin';
-$route['logout'] = 'c_general/logout';
-
-
-$route['ApplyAttend'] = 'c_user/ApplyAttend';
-$route['ApplyLeave'] = 'c_user/ApplyLeave';
-$route['EmpMonthMoves'] = "c_user/EmpMonthMoves";
-$route['EmpExtraHours'] = "c_user/EmpExtraHours";
-
-
-$route['ConstantDetails'] = 'c_admin/ConstantDetails';
-$route['AddConstant'] = 'c_admin/AddConstant';
-$route['getConstant'] = 'c_admin/getConstant';
-$route['getConstDetails/(:num)'] = 'c_admin/getConstDetails/$1';
-$route['AddConstantDet'] = 'c_admin/AddConstantDet';
-
-$route['NewEmp'] = 'c_admin/NewEmp';
-$route['CompProfile'] = 'c_admin/CompProfile';
-
-$route['JobTitles'] = 'c_admin/JobTitles';
-$route['AddJobTitle'] = 'c_admin/AddJobTitle';
-$route['GetJobTitle'] = 'c_admin/GetJobTitle';
-$route['UpdateJobTitle'] = 'c_admin/UpdateJobTitle';
-$route['DeleteJobTitle'] = 'c_admin/DeleteJobTitle';
-
-$route['getArch'] = 'c_admin/getArch';
-$route['AddArch'] = 'c_admin/AddArch';
-$route['GetArchChild/(:num)'] = 'c_admin/GetArchChild/$1';
-$route['GetSingleArch'] = 'c_admin/GetSingleArch';
-$route['UpdateArch'] = 'c_admin/UpdateArch';
-
-$route['NewJobForEmp'] = 'c_admin/NewJobForEmp';
-$route['AddEmployee'] = 'c_admin/AddEmployee';
-$route['UpdateEmployee'] = 'c_admin/UpdateEmployee';
-$route['EmployeeFilter'] = 'c_admin/EmployeeFilter';
-$route['DeleteEmp'] = 'c_admin/DeleteEmp';
-$route['AjaxEmpAttendance'] = 'c_admin/AjaxEmpAttendance';
-$route['EmpAttendance(:any)'] = 'c_admin/EmpAttendance/$1';
-$route['EditEmp/(:any)'] = 'c_admin/EditEmp/$1';
-
-$route['WorkGroup'] = 'c_admin/WorkGroup';
-$route['AddWorkGroup'] = 'c_admin/AddWorkGroup';
-$route['getWorkGroupDetails/(:num)'] = 'c_admin/getWorkGroupDetails/$1';
-$route['AddWorkGroupDet'] = 'c_admin/AddWorkGroupDet';
-
-$route['AddCompProfile'] = 'c_admin/AddCompProfile';
+//
+//$route['default_controller'] = "welcome";
+//$route['ElecFingerPrint'] = "welcome";
+//$route['404_override'] = 'welcome';
+//
+//
+//$route['login'] = 'c_general/login';
+//$route['AjaxLogin'] = 'c_general/AjaxLogin';
+//$route['logout'] = 'c_general/logout';
+//
+//
+//$route['ApplyAttend'] = 'c_user/ApplyAttend';
+//$route['ApplyLeave'] = 'c_user/ApplyLeave';
+//$route['EmpMonthMoves'] = "c_user/EmpMonthMoves";
+//$route['EmpExtraHours'] = "c_user/EmpExtraHours";
+//
+//
+//$route['ConstantDetails'] = 'c_admin/ConstantDetails';
+//$route['AddConstant'] = 'c_admin/AddConstant';
+//$route['getConstant'] = 'c_admin/getConstant';
+//$route['getConstDetails/(:num)'] = 'c_admin/getConstDetails/$1';
+//$route['AddConstantDet'] = 'c_admin/AddConstantDet';
+//
+//$route['NewEmp'] = 'c_admin/NewEmp';
+//$route['CompProfile'] = 'c_admin/CompProfile';
+//
+//$route['JobTitles'] = 'c_admin/JobTitles';
+//$route['AddJobTitle'] = 'c_admin/AddJobTitle';
+//$route['GetJobTitle'] = 'c_admin/GetJobTitle';
+//$route['UpdateJobTitle'] = 'c_admin/UpdateJobTitle';
+//$route['DeleteJobTitle'] = 'c_admin/DeleteJobTitle';
+//
+//$route['getArch'] = 'c_admin/getArch';
+//$route['AddArch'] = 'c_admin/AddArch';
+//$route['GetArchChild/(:num)'] = 'c_admin/GetArchChild/$1';
+//$route['GetSingleArch'] = 'c_admin/GetSingleArch';
+//$route['UpdateArch'] = 'c_admin/UpdateArch';
+//
+//$route['NewJobForEmp'] = 'c_admin/NewJobForEmp';
+//$route['AddEmployee'] = 'c_admin/AddEmployee';
+//$route['UpdateEmployee'] = 'c_admin/UpdateEmployee';
+//$route['EmployeeFilter'] = 'c_admin/EmployeeFilter';
+//$route['DeleteEmp'] = 'c_admin/DeleteEmp';
+//$route['AjaxEmpAttendance'] = 'c_admin/AjaxEmpAttendance';
+//$route['EmpAttendance(:any)'] = 'c_admin/EmpAttendance/$1';
+//$route['EditEmp/(:any)'] = 'c_admin/EditEmp/$1';
+//
+//$route['WorkGroup'] = 'c_admin/WorkGroup';
+//$route['AddWorkGroup'] = 'c_admin/AddWorkGroup';
+//$route['getWorkGroupDetails/(:num)'] = 'c_admin/getWorkGroupDetails/$1';
+//$route['AddWorkGroupDet'] = 'c_admin/AddWorkGroupDet';
+//
+//$route['AddCompProfile'] = 'c_admin/AddCompProfile';
 /****************** Ibrahim Routs ************************/
-$route['SendSms'] = 'c_admin/sendSms';
+//$route['SendSms'] = 'c_admin/sendSms';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

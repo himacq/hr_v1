@@ -12,6 +12,20 @@
                     </div>
                 </div>
                 <div class="portlet-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                            <tr>
+                                <th>الإسم</th>
+                                <th colspan="2" id="name_ar" ><?php echo $selectedempData[0]->s_name_ar ?></th>
+                                <th>رقم الهوية</th>
+                                <th id="emp_ssn"><?php echo $selectedempData[0]->s_emp_ssn ?></th>
+                                <th>الرقم الوظيفي</th>
+                                <th id="emp_number"><?php echo $selectedempData[0]->i_emp_number ?></th>
+                            </tr>
+                            </thead>
+                            </table>
+                        </div>
                     <form class="form-horizontal" id="formData" method="post" onsubmit="return false;">
                         <div class="row">
                             <div class="col-sm-5 col-sm-offset-1" >
@@ -19,11 +33,10 @@
                                     <label for="marital_status">المسمى الوظيفي</label>
                                     <select name="fk_i_mstatus_cd" class="c-select" id="marital_status">
                                         <option value=""></option>
-                                        <?php for($i=1;$i<5;$i++)
+                                        <?php foreach($jobData as $row)
                                         {?>
-                                            <option value="<?php echo $i?>"><?php echo 'option '.$i ?></option>
+                                            <option value="<?php echo $row->pk_i_id?>"><?php echo $row->s_name_ar ?></option>
                                         <?php }?>
-                                        <option value="<?php echo '6'?>" selected><?php echo 'option 6'; ?></option>
                                     </select>
                                 </div>
                             </div>
@@ -32,9 +45,9 @@
                                     <label for="marital_status">فرع الشركة</label>
                                     <select name="fk_i_mstatus_cd" class="c-select" id="marital_status">
                                         <option value=""></option>
-                                        <?php for($i=1;$i<5;$i++)
+                                        <?php foreach($constantData as $row)
                                         {?>
-                                            <option value="<?php echo $i?>"><?php echo 'الشركة '.$i ?></option>
+                                            <option value="<?php echo $row->pk_i_id?>"><?php echo $row->s_name_ar ?></option>
                                         <?php }?>
                                     </select>
                                 </div>
@@ -46,40 +59,25 @@
                                     <label for="marital_status">نوع العقد</label>
                                     <select name="fk_i_mstatus_cd" class="c-select" id="marital_status">
                                         <option value=""></option>
-                                        <?php for($i=1;$i<5;$i++)
+                                        <?php foreach($contractData as $row)
                                         {?>
-                                            <option value="<?php echo $i?>"><?php echo 'option '.$i ?></option>
+                                            <option value="<?php echo $row->pk_i_id?>"><?php echo $row->s_name_ar ?></option>
                                         <?php }?>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-5 " >
                                 <div class="form-group floating-labels">
-                                    <label for="marital_status">الدائرة</label>
+                                    <label for="marital_status">التسكين على الهيكلية</label>
                                     <select name="fk_i_mstatus_cd" class="c-select" id="marital_status">
                                         <option value=""></option>
-                                        <?php for($i=1;$i<5;$i++)
+                                        <?php foreach($archData as $row)
                                         {?>
-                                            <option value="<?php echo $i?>"><?php echo 'الشركة '.$i ?></option>
+                                            <option value="<?php echo $row->pk_i_id?>"><?php echo $row->ArchName." - ".$row->arch_type ?></option>
                                         <?php }?>
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-5 col-sm-offset-1" >
-                                <div class="form-group floating-labels">
-                                    <label for="marital_status">القسم</label>
-                                    <select name="fk_i_mstatus_cd" class="c-select" id="marital_status">
-                                        <option value=""></option>
-                                        <?php for($i=1;$i<5;$i++)
-                                        {?>
-                                            <option value="<?php echo $i?>"><?php echo 'option '.$i ?></option>
-                                        <?php }?>
-                                    </select>
-                                </div>
-                            </div>
-
                         </div>
                         <div class="row">
                             <div class="col-sm-5 col-sm-offset-1" >
@@ -93,66 +91,11 @@
                                 <div class=" floating-labels M-select2-containe">
                                     <h6 for="marital_status" class="M-labelTitle">المدير المباشر</h6>
                                     <select  name="fk_i_mstatus_cd" id="marital_status" class="M-select2 c-select" >
-                                        <optgroup label="Alaskan/Hawaiian Time Zone">
-                                            <option value="AK">Alaska</option>
-                                            <option value="HI">Hawaii</option>
-                                        </optgroup>
-                                        <optgroup label="Pacific Time Zone">
-                                            <option value="CA">California</option>
-                                            <option value="NV">Nevada</option>
-                                            <option value="OR">Oregon</option>
-                                            <option value="WA">Washington</option>
-                                        </optgroup>
-                                        <optgroup label="Mountain Time Zone">
-                                            <option value="AZ">Arizona</option>
-                                            <option value="CO">Colorado</option>
-                                            <option value="ID">Idaho</option>
-                                            <option value="MT">Montana</option>
-                                            <option value="NE">Nebraska</option>
-                                            <option value="NM">New Mexico</option>
-                                            <option value="ND">North Dakota</option>
-                                            <option value="UT">Utah</option>
-                                            <option value="WY">Wyoming</option>
-                                        </optgroup>
-                                        <optgroup label="Central Time Zone">
-                                            <option value="AL">Alabama</option>
-                                            <option value="AR">Arkansas</option>
-                                            <option value="IL">Illinois</option>
-                                            <option value="IA">Iowa</option>
-                                            <option value="KS">Kansas</option>
-                                            <option value="KY">Kentucky</option>
-                                            <option value="LA">Louisiana</option>
-                                            <option value="MN">Minnesota</option>
-                                            <option value="MS">Mississippi</option>
-                                            <option value="MO">Missouri</option>
-                                            <option value="OK">Oklahoma</option>
-                                            <option value="SD">South Dakota</option>
-                                            <option value="TX">Texas</option>
-                                            <option value="TN">Tennessee</option>
-                                            <option value="WI">Wisconsin</option>
-                                        </optgroup>
-                                        <optgroup label="Eastern Time Zone">
-                                            <option value="CT">Connecticut</option>
-                                            <option value="DE">Delaware</option>
-                                            <option value="FL">Florida</option>
-                                            <option value="GA">Georgia</option>
-                                            <option value="IN">Indiana</option>
-                                            <option value="ME">Maine</option>
-                                            <option value="MD">Maryland</option>
-                                            <option value="MA">Massachusetts</option>
-                                            <option value="MI">Michigan</option>
-                                            <option value="NH">New Hampshire</option>
-                                            <option value="NJ">New Jersey</option>
-                                            <option value="NY">New York</option>
-                                            <option value="NC">North Carolina</option>
-                                            <option value="OH">Ohio</option>
-                                            <option value="PA">Pennsylvania</option>
-                                            <option value="RI">Rhode Island</option>
-                                            <option value="SC">South Carolina</option>
-                                            <option value="VT">Vermont</option>
-                                            <option value="VA">Virginia</option>
-                                            <option value="WV">West Virginia</option>
-                                        </optgroup>
+                                        <option value=""></option>
+                                        <?php foreach($managersData as $row)
+                                        {?>
+                                            <option value="<?php echo $row->i_emp_number?>"><?php echo $row->s_name_ar; ?></option>
+                                        <?php }?>
                                     </select>
                                 </div>
                             </div>

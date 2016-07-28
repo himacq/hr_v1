@@ -487,13 +487,19 @@ class c_admin extends MY_Controller {
 	
 	/*********************الموظفين************************/
 	
-	public function NewJobForEmp(){
-		if($this->hasPermission(19)){
+	public function NewJobForEmp($i_emp_number){
+		if($this->hasPermission(22)){
+			$pk_i_id=$this->uri->segment(2);
+			$this->load->model('m_emp');
+			$this->load->model('m_arch');
+			$this->data['managersData']=$this->m_emp->getButMe($pk_i_id);
+			$this->data['selectedempData']=$this->m_emp->getView($pk_i_id);
 			$this->load->model('m_constant');
 			$this->load->model('m_jobs_cd');
-			$this->data['constantData']=$this->m_constant->getDetails(9);
+			$this->data['constantData']=$this->m_constant->getDetails(10);
+			$this->data['contractData']=$this->m_constant->getDetails(11);
 			$this->data['jobData']=$this->m_jobs_cd->get();
-			$this->data['archData']=$this->DispArch();
+			$this->data['archData']=$this->m_arch->getArchDetails();
 			$this->data['subpage']='adminCtrPnl/NewJobForEmp';
 			$this->load->view('index',$this->data);
 		}
@@ -674,7 +680,6 @@ class c_admin extends MY_Controller {
 	public function EmpAttendance()
 	{
 		if($this->hasPermission(22)) {
-
 			$this->load->model('m_emp');
 			$this->data['empData']=$this->m_emp->getView();
 			$dates = array("Monday" => 'الإثنين', "Tuesday" => 'الثلاثاء', "Wednesday" => 'الأربعاء', "Thursday" => 'الخميس', "Friday" => 'الجمعة', "Saturday" => 'السبت', "Sunday" => 'الأحد');
@@ -756,6 +761,12 @@ class c_admin extends MY_Controller {
 			$year=$this->input->post('selectedYear');
 			$this->load->model("m_attendance");
 			$this->data['selectedempData']=$this->m_emp->getView($pk_i_id);
+			if(sizeof($this->data['selectedempData'])==0)
+			{
+				$this->data['status']=$this->ResponseState(FALSE,'هذا المستخدم غير موجود');
+				echo json_encode($this->data);
+				return;
+			}
 			$end_of_month = date("t", strtotime(date($year.'-'.$month.'-d')));
 			$EmpLog = array();
 			for ($i = 1; $i <= $end_of_month; $i++) {
@@ -812,6 +823,7 @@ class c_admin extends MY_Controller {
 			$this->data['attend'] = $EmpLog;/*
 			$this->data['subpage'] = 'adminCtrPnl/MonthAttendReport';
 			$this->load->view('index', $this->data);*/
+			$this->data['status']=$this->ResponseState(TRUE,'تم عرض البيانات');
 			echo json_encode($this->data);
 		}
 		else
