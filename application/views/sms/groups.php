@@ -14,6 +14,8 @@
                         <div class="form-group floating-labels">
                             <label for="s_name_ar">اسم المجموعة </label>
                             <input id="name" type="text" name="name">
+                            <input type="hidden" name="group_id" id="group_id" />
+
                         </div>
                     </div>
                     <div class="col-sm-5">
@@ -107,7 +109,7 @@ $(document).ready(function(){
 					success: function (data) {
 						if(data.status.success){
                                                     var published="غير متاحة";
-                                                    if($("#published").val())
+                                                    if($("#published").is(':checked'))
                                                         published="متاحة";
 							$(".alert-danger-outline").hide();
 							$(".alert-success-outline").show();
@@ -117,7 +119,7 @@ $(document).ready(function(){
 								+'<td>'+$("#name").val()+'</td>'
                                                                 +'<td>'+published+'</td>'
 								+'<td>'
-									+'<a class="btn btn-danger delBtn" id"'+data.id+'">'
+									+'<a class="btn btn-danger delBtn" id="'+data.id+'">'
 										+'<span class="fa fa-remove"></span>'
 									+'</a>'
 									+'<a class="btn btn-warning editBtn" id="'+data.id+'">'
@@ -140,13 +142,13 @@ $(document).ready(function(){
 			}
 		});
 
-	$(".editBtn").on('click',function(){
+	
+        
+        $(".editBtn").on('click',function(){
 		$(".alert-info-outline").show();
-				var dataArray={'pk_i_id':$(this).attr('id')};
 				$.ajax({
-					url: '<?php echo base_url() ?>GetJobTitle',
+					url: '<?php echo base_url() ?>GetSmsGroup/'+$(this).attr('id'),
 					type: 'POST',
-					data: dataArray,
 					dataType:"json",
 					async: false,
 					success: function (data) {
@@ -157,9 +159,14 @@ $(document).ready(function(){
 							$("#update").show();
 							$(".form-group.floating-labels").removeClass("is-empty");
 							$("#successMsg").text(data.status.msg);
-							$("#s_name_ar").val(data.jobData[0].s_name_ar)
-							$("#s_name_en").val(data.jobData[0].s_name_en)
-							$("#pk_i_id").val(data.jobData[0].pk_i_id)
+							$("#name").val(data.groupData[0].group_name)
+							
+                                                        if(data.groupData[0].published==1)
+                                                            $("#published").prop('checked', true);
+                                                        else
+                                                             $("#published").prop('checked', false);
+                                                        
+							$("#group_id").val(data.groupData[0].group_id)
 							
 						}
 						else {
@@ -180,25 +187,29 @@ $(document).ready(function(){
 		$(".alert-info-outline").show();
 				var formData = new FormData($("#formData")[0]);
 				$.ajax({
-					url: '<?php echo base_url() ?>UpdateJobTitle',
+					url: '<?php echo base_url() ?>UpdateSmsGroup',
 					type: 'POST',
 					data: formData,
 					dataType:"json",
 					async: false,
 					success: function (data) {
-						if(data.status.success){	
+						if(data.status.success){
+                                                    var published="غير متاحة";
+                                                    if($("#published").is(':checked'))
+                                                        published="متاحة";
+                                                    
 							$(".alert-danger-outline").hide();
 							$(".alert-success-outline").show();
 							$("#save").show();
 							$("#update").hide();
 							$("#successMsg").text(data.status.msg);
-							console.log("tr"+$("#pk_i_id").val())
-							$("#tr"+$("#pk_i_id").val()).children().first().html($("#pk_i_id").val());
-							$("#tr"+$("#pk_i_id").val()).children().first().next().html($("#s_name_ar").val());
-							$("#tr"+$("#pk_i_id").val()).children().first().next().next().html($("#s_name_en").val());
-							$("#s_name_ar").val('')
-							$("#s_name_en").val('')
-							$("#pk_i_id").val('')
+							console.log("tr"+$("#id").val())
+							$("#tr"+$("#group_id").val()).children().first().html($("#group_id").val());
+							$("#tr"+$("#group_id").val()).children().first().next().html($("#name").val());
+
+							$("#tr"+$("#group_id").val()).children().first().next().next().html(published);
+							$("#name").val('')
+			
 							
 						}
 						else {
@@ -224,13 +235,12 @@ $(document).ready(function(){
 			
 	function DelFunction(id){
 		$(".alert-info-outline").show();
-		var dataArray={'pk_i_id':id};
-					console.log("tr"+id)
+		
 		$.ajax({
-			url: '<?php echo base_url() ?>DeleteJobTitle',
-			type: 'POST',
-			data: dataArray,
-			dataType:"json",
+			url: '<?php echo base_url() ?>DeleteSmsGroup/'+id,
+					type: 'POST',
+					dataType:"json",
+					async: false,
 			success: function (data) {
 				if(data.status.success){	
 					$(".alert-danger-outline").hide();

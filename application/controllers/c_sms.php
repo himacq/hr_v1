@@ -42,349 +42,43 @@ class C_sms extends MY_Controller {
          }
          public function add_member()
          {   
-             
-             if ( isset($_POST))
-             { 
-             $this->form_validation->set_rules('mobile', 'رقم الجوال', 'required');
-             $this->form_validation->set_rules('member_nam', 'اسم الفرد', 'required');
-                 
-             $group_selected = $this->input->post('group_selected');
-             $mobile = $this->input->post('mobile');
-             $email = $this->input->post('email');
-             $member_nam = $this->input->post('member_nam');
-             $note = $this->input->post('note');
-             
-             $data = array(
-             'group_id' => $group_selected,
-             'member_mobile' =>  $mobile ,
-             'member_email' =>  $email ,
-             'member_name' =>  $member_nam ,
-             'notes' => $note,
-             );
-             
-             
-            if ( $this->form_validation->run() == FALSE)
-		 {
-                    $msg = form_error('mobile');
-                    $msg2 = form_error('member_nam');
-                    $data = array(
-                        'Mobile_Erorr' => $msg, 
-                        'Name_Erorr' => $msg2, 
-                     );
-                    print json_encode($data);
-                                    }
-             else {
-                    echo $this->load->model('contact/m_contact');
-                    $this->m_contact->add_member($data);
-                     
-                    
-             } 
-                 
-             
-            
+             if(!$this->input->post('group_id')){
+                 $this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
              }
+          else if($this->hasPermission(25)){
+			$dataArr=array('member_name'=>$this->input->post('name'),
+                            'member_mobile'=>$this->input->post('mobile'),
+                            'group_id'=>$this->input->post('group_id'));
+                        $this->load->model('m_sms');
+			$res=$this->m_sms->add_member($dataArr); 
+			if($res>=1){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الإضافة بنجاح');
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+                exit;
+             
              
           
          }
-       public function add_sender2Acc($selr2)
-         {             
-             $account_id = $selr2;
-             $sender_id = $this->input->post('sender_sele');
-             
-             $data = array(
-             'account_id' =>  $account_id ,
-             'sender_id' =>   $sender_id,
-             );
-             
-            echo $this->load->model('account/m_account');
-            $this->m_account->add_sender2Acc($data);
-         }
          
-        
-       
-        public function group_json($account_id)
-         {
-                 $data = $this->_model->get_group($account_id); 
-                 //echo json_encode($data);
-                 return $data;
-                 //var_dump($data);
-                // exit();
-                
-         } 
-        public function group1_json()
-         {
-                 $data = $this->_model->get_group(); 
-                 echo json_encode($data);
-                 return $data;
-                 //var_dump($data);
-                // exit();
-                
-         } 
-        public function balance_json()
-         {
-                 $data = $this->_model->get_balance(); 
-                 echo json_encode($data);
-                 //var_dump($data);
-                
-         } 
-        public function sms_json()
-         {
-                 $data = $this->_model->get_sms(); 
-                 //echo json_encode($data);
-                 return $data;
-                
-         } 
-        public function sms_json_withID($id)
-         {
-            
-                 $data ['hani'] = $this->_model->get_sms_withID($id); 
-                 //echo json_encode($data);
-                 $this->load->view('mtit_template/x.php',$data);
-                 //return $data;
-                
-         } 
-        public function sms_json_withID2($id)
-         {
-            
-                 $data ['hani'] = $this->_model->get_sms_withID2($id); 
-                 //echo json_encode($data);
-                 $this->load->view('mtit_template/xy.php',$data);
-                 //return $data;
-                
-         } 
-        public function group_member($group_id)
-         {
-                  
-                $data = array( 
-                  'array_group' => $this->group_json($this->_user_id),
-                  'members' => $this->_model->group_member($group_id),
-                     );  
-
-                 //$data ['members'] = $this->_model->group_member($group_id); 
-                 //echo json_encode($data);
-                 $this->load->view('mtit_template/member_view.php',$data);
-                 //return $data;
-                
-         } 
-        public function get_account_sender($id)
-         {
-                 $data = $this->_model->get_account_sender($id); 
-                 echo json_encode($data);
-                 //var_dump($data);
-                
-         } 
-         
-       public function group_byID($id)
-	{   
-            $this->load->model('contact/m_contact');
-            $result = $this->m_contact->group_byID($id);
-           //var_dump($result);
-            print json_encode($result);
-          //  echo 'mmm';
-          //return json_encode($result);
-            
-	}
-              public function update_group($id)
+         public function upload_contact()
          {   
              
-             
-             if ( isset($_POST))
-             {
-                 
-             //$this->form_validation->set_rules('account_id', 'رقم هوية الحساب', 'required');
-             $this->form_validation->set_rules('group_name', 'اسم المجموعة', 'required');
-             
-             
-                 
-             $account_id = $this->_user_id;
-             $group_name = $this->input->post('group_name');
-             $group_status = $this->input->post('group_stat');
-             
-             $data = array(
-             'account_id' =>  $account_id ,
-             'group_name' =>  $group_name ,
-             'published' => $group_status,
-            
-             );
-             
-           if ( $this->form_validation->run() == FALSE)
-		 {
-                    //$msg = form_error('account_id');
-                    $msg1 = form_error('group_name');
-                    $data = array(
-                       'Account_id_Erorr' => $msg,
-                        'Group_name_Erorr' => $msg1, 
-                     );
-                    $outputArray=array('status'=>"error","errordata"=>json_encode($data));
-                    print json_encode($outputArray);
-                                    }
-                     else{
-                    echo $this->load->model('contact/m_contact');
-                    $ids = $this->m_contact->update_group($data,$id);
-                    $data["group_id"]=$ids;
-                    $outputArray=array("status"=>"success","idata"=>$data);
-                    print json_encode($outputArray);
-                    }
+              if(!$this->input->post('excel_group_id')){
+                 $this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
              }
-             
-         }
-         public function delete_group($id)
-         {    
-             $this->load->model('contact/m_contact');
-             $this->m_contact->delete_group($id);
-         }         
-        
-        public function get_getways()
-         {
-                 $data = $this->_model->get_getways(); 
-                 return $data;
-                 //var_dump($data);
-                
-         } 
-        public function get_senders()
-         {
-                 $data = $this->_model->get_senders(); 
-                 return $data;
-                 //var_dump($data);
-                
-         } 
-         
-         
-        public function get_sender_by_getwayName($get_id)
-	{   
-            
-            $this->load->model('account/m_account');
-            $result = $this->m_account->get_sender_by_getwayName($get_id);
-            echo json_encode($result);
-            
-	}  
-        
-    public function get_membersJson(){
-    
-             
-            $this->load->model('contact/m_contact');
-            $data = $this->_model->get_membersJson($this->_user_id);
-            echo json_encode($data);
-    }
-    
-    public function getMember_byID($member_id){
-        
-            $this->load->model('contact/m_contact');
-            $data = $this->_model->getMember_byID($member_id);
-            echo json_encode($data);
-        
-    }
-    
-        
-         public function update_member($member_id)
-         {   
-             if ( isset($_POST))
-             { 
-             $this->form_validation->set_rules('mobile', 'رقم الجوال', 'required');
-             $this->form_validation->set_rules('member_nam', 'اسم الفرد', 'required');
-                 
-             $group_selected = $this->input->post('group_selected');
-             $mobile = $this->input->post('mobile');
-             $email = $this->input->post('email');
-             $member_nam = $this->input->post('member_nam');
-             $note = $this->input->post('note');
-             
-             $data = array(
-             'group_id' => $group_selected,
-             'member_mobile' =>  $mobile ,
-             'member_email' =>  $email ,
-             'member_name' =>  $member_nam ,
-             'notes' => $note,
-             );
-             
-             
-            if ( $this->form_validation->run() == FALSE)
-		 {
-                    $msg = form_error('mobile');
-                    $msg2 = form_error('member_nam');
-                    $data = array(
-                        'Mobile_Erorr' => $msg, 
-                        'Name_Erorr' => $msg2, 
-                     );
-                    print json_encode($data);
-                                    }
-                     else{
-                      $this->load->model('contact/m_contact');
-                      $this->_model->update_member($data,$member_id);
-                    }
-             }
-             
-         }    
-         
-         
-         public function delete_member($member_id)
-         {    
-             $this->load->model('contact/m_contact');
-             $this->_model->delete_member($member_id);
-         }
-         
-         public function export_group($group_id)
-         {    
-             $this->load->model('contact/m_contact');
-             $group = $this->_model->group_byID($group_id);
-             if($group['0']['account_id']!=$this->_user_id)
-             { 
-             echo "error group ID";
-             exit;
-             }
-             $members = $this->_model->group_member($group_id);
-             
-             echo "<table border='1'><tr><td>name</td><td>mobile</td><td>email</td><td>notes</td></tr> ";
-             foreach($members as $member){
-                echo "<tr><td>".iconv("utf-8", "windows-1256", $member['member_name'])."</td><td>".$member['member_mobile']."</td>"
-                        . "<td>".$member['member_email']."</td><td>".iconv("utf-8", "windows-1256", $member['notes'])."</td></tr> ";
-
-             }
-             echo "</table>";
-            header("Content-type: application/vnd.ms-excel;  name='excel'");
-            header("Content-Disposition: attachment; filename=exportfile.xls");
-
-             
-         }
-         
-        public  function import_members(){
-                
-            if ( isset($_POST))
-            { 
-                $this->do_upload();
-                $group_id =  $this->input->post('group_selected');  
-                $group_id2 =  $this->input->post('file2upload');  
-               // var_dump($group_id2);                exit();
-              //echo $_SERVER['DOCUMENT_ROOT']; exit;
-                
-                $objReader = PHPExcel_IOFactory::createReader('Excel5');
-                $objPHPExcel = $objReader->load("application/third_party/uploads/1.xls");
-                $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                
-                //var_dump($sheetData); exit;
-                foreach ($sheetData as $value) {
-                    
-                    $data = array(
-                    'group_id' => $group_id,
-                    'member_mobile' =>  $value['A']  ,
-                    'member_email' =>  $value['B']  ,
-                    'member_name' =>  $value['C']  ,
-                    );
-                    echo $this->load->model('contact/m_contact');
-                    $this->m_contact->add_member($data);
-                    //echo $value['A'] . '<br />';
-                }
-                 }
-            }
-
-      public function do_upload()
-	
-	{
-		
-             if ( isset($_POST))
+          else if($this->hasPermission(25)){
+              
+              if ( isset($_POST))
              { 
                 /*-------------------------- 1) setup config array -----------------------------------*/ 
-                $config['upload_path'] = $_SERVER['DOCUMENT_ROOT'].'/rasel/uploads/';
+                $config['upload_path'] = FCPATH.'/uploads/contacts';
 		$config['allowed_types'] = '*';
 		$config['max_size']	= '1000';
 		$config['max_width']  = '1024';
@@ -392,8 +86,9 @@ class C_sms extends MY_Controller {
 
 		$this->load->library('upload', $config);
                 $this->upload->initialize($config);
-                
-                if($_FILES['userfile']['type']!=="application/vnd.ms-excel"){
+     
+                if(!($_FILES['userfile']['type']=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+                        || $_FILES['userfile']['type']=="application/vnd.ms-excel" )){
                     echo "خطأ في صيغة الملف يرجى حفظ الملف بصيغة xls ";
                     exit;
                 }
@@ -410,20 +105,37 @@ class C_sms extends MY_Controller {
                         {
                     
                 /*-------------------------- 3) reading file after success upload -----------------------------------*/ 
-                        $group_id =  $this->input->post('group_selected');
+                        $group_id =  $this->input->post('excel_group_id');
 			//$data = array('upload_data' => $this->upload->data());
                         $file_data = $this->upload->data();       
                         $file_name = ($file_data['file_name']);
                         
-
-                        $objReader = PHPExcel_IOFactory::createReader('Excel5');
-                        $objPHPExcel = $objReader->load("./uploads/".$file_name);
-                        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                            
+                        $this->load->library('excel');                          
+                        $objPHPExcel = PHPExcel_IOFactory::load($config['upload_path']."/".$file_name);
+ 
+                        $cell_collection = $objPHPExcel->getActiveSheet()->getCellCollection();
                         
+                        foreach ($cell_collection as $cell) {
+    $column = $objPHPExcel->getActiveSheet()->getCell($cell)->getColumn();
+    $row = $objPHPExcel->getActiveSheet()->getCell($cell)->getRow();
+    $data_value = $objPHPExcel->getActiveSheet()->getCell($cell)->getValue();
+ 
+    //header will/should be in row 1 only. of course this can be modified to suit your need.
+    if ($row == 1) {
+        $header[$row][$column] = $data_value;
+    } else {
+        $arr_data[$row][$column] = $data_value;
+    }
+}
+ 
+//send the data in an array format
+$data['header'] = $header;
+$data['values'] = $arr_data;
+
+
                        
                        /*-------------------------- 4) insert to database -----------------------------------*/
-                        foreach($sheetData as $value){
+                        foreach($arr_data as $value){
                            $element =null;
                            $value['A'] = trim($value['A']);
                            
@@ -450,43 +162,203 @@ class C_sms extends MY_Controller {
                             $data = array(
                             'group_id' => $group_id,
                             'member_mobile' =>  $mobile  ,
-                            'member_email' =>  $value['B']  ,
-                            'member_name' =>  $value['C']  ,
+                            'member_name' =>  $value['B']  ,
                             );
                             
-                            echo $this->load->model('contact/m_contact');
-                            $this->m_contact->add_member($data);
+                            $this->load->model('m_sms');
+			$res=$this->m_sms->add_member($data); 
+			if($res>=1){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الإضافة بنجاح');
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
                             }
                            
                         }
                         
-                      
-                        
-                       /*----------------------- 6) redirect to member page ------------------------*/
-                        $this->members();
-
+       
                 }
                 
                  /*----------------------- 5) delete file after inserting to database ------------------------*/
-                        if(unlink($_SERVER['DOCUMENT_ROOT'].'rasel/uploads/'.$file_name))
+                        if(unlink($config['upload_path']."/".$file_name))
                         {
                             //echo "File ".$_SERVER['DOCUMENT_ROOT'].'rasel/uploads/'.$file_name." Deleted.";
                         }
              }
-        }
-
-         public function index()
-	{   
+             
             
-//          $data = array( 
-//              'array_get' => $this->get_getways(),
-//              'array_sen' => $this->get_senders(),
-//          );
-//          $this->template->write_view('sidebar', 'mtit_template/sidebar', TRUE);
-//          $this->template->write_view('pagecontent', 'mtit_template/groups',$data, TRUE);
-//          $this->template->render();
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		
+               
+                
+                $this->load->model('m_sms');
+		$this->data['myGroups']=$this->m_sms->get_group($this->_user_id);
+                $this->data['groupMembers']=$this->m_sms->get_members($this->_user_id);
+            $this->data['subpage']='sms/contacts';
+            
+           $this->load->view('index',$this->data);
+           
+             
+             
+          
+         }
+
          
+       public function group_byID($id)
+	{   
+            if($this->hasPermission(24)){
+			$this->load->model('m_sms');
+			$res=$this->m_sms->group_byID($id);
+			if(sizeof($res)){
+				$this->data['status']=$this->ResponseState(TRUE,'تم جلب البيانات بشكل صحيح');
+				$this->data['groupData']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'لم يتم العثور على السجل المطلوب');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+            
 	}
+        
+        
+        public function contact_byID($id)
+	{   
+            if($this->hasPermission(25)){
+			$this->load->model('m_sms');
+			$res=$this->m_sms->getMember_byID($id);
+			if(sizeof($res)){
+				$this->data['status']=$this->ResponseState(TRUE,'تم جلب البيانات بشكل صحيح');
+				$this->data['contactData']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'لم يتم العثور على السجل المطلوب');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+            
+	}
+        
+              public function update_group()
+         {   
+                  $id = $this->input->post('group_id');
+             if($this->hasPermission(24)){
+			$this->load->model('m_sms');
+			$dataArr=array(
+				'group_name'=>$this->input->post('name'),
+				'published'=>$this->input->post('published'),
+				);
+			$res=$this->m_sms->update_group($dataArr,$id);
+			if($res>=1){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية التعديل بنجاح');
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+                          
+         }
+         
+         public function delete_group($id)
+         {    
+             $this->load->model('m_sms');
+            $result = $this->m_sms->group_byID($id);
+
+            if($this->hasPermission(24) && $result['0']['account_id']==$this->_user_id){
+             $this->load->model('m_sms');
+             $res = $this->m_sms->delete_group($id);
+             if($res){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الحذف بنجاح');
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+             }
+             else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+         }         
+        
+
+  
+      
+    
+        
+         public function update_contact()
+         {   
+                  $id = $this->input->post('member_id');
+             if($this->hasPermission(25)){
+			$this->load->model('m_sms');
+			$dataArr=array(
+				'member_name'=>$this->input->post('name'),
+				'member_mobile'=>$this->input->post('mobile'),
+                                'group_id'=>$this->input->post('group_id'),
+				);
+			$res=$this->m_sms->update_member($dataArr,$id);
+			if($res>=1){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية التعديل بنجاح');
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+                   
+             
+         }    
+         
+         
+         public function delete_contact($member_id)
+         {    
+
+
+            if($this->hasPermission(25)){
+             $this->load->model('m_sms');
+             $res = $this->m_sms->delete_member($member_id);
+             if($res){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الحذف بنجاح');
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+             }
+             else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+         }
+         
+         public function export_group($group_id)
+         {    
+             $this->load->model('contact/m_contact');
+             $group = $this->_model->group_byID($group_id);
+             if($group['0']['account_id']!=$this->_user_id)
+             { 
+             echo "error group ID";
+             exit;
+             }
+             $members = $this->_model->group_member($group_id);
+             
+             echo "<table border='1'><tr><td>name</td><td>mobile</td><td>email</td><td>notes</td></tr> ";
+             foreach($members as $member){
+                echo "<tr><td>".iconv("utf-8", "windows-1256", $member['member_name'])."</td><td>".$member['member_mobile']."</td>"
+                        . "<td>".$member['member_email']."</td><td>".iconv("utf-8", "windows-1256", $member['notes'])."</td></tr> ";
+
+             }
+             echo "</table>";
+            header("Content-type: application/vnd.ms-excel;  name='excel'");
+            header("Content-Disposition: attachment; filename=exportfile.xls");
+
+             
+         }
+         
         
         public function groups()
 	{   
@@ -499,21 +371,309 @@ class C_sms extends MY_Controller {
              }
          
 	}
-
-        public function members()
-	{  
+        
+         public function contacts()
+	{   
+             if($this->hasPermission(25)){
+             $this->load->model('m_sms');
+		$this->data['myGroups']=$this->m_sms->get_group($this->_user_id);
+                $this->data['groupMembers']=$this->m_sms->get_members($this->_user_id);
+            $this->data['subpage']='sms/contacts';
             
-           $credit = new C_credit();
-           $user_credit = $credit->get_user_credit(); 
-           
-            $data = array( 
-              'array_group' => $this->group_json($this->_user_id),
-               "user_credit"=>$user_credit
-                 );  
-          $this->template->write_view('pagecontent', 'mtit_template/members', $data , TRUE);
-          $this->template->render();
+           $this->load->view('index',$this->data);
+             }
          
 	}
+        
+         public function get_group_numbers($id)
+	{   
+             if($this->hasPermission(27)){
+             $this->load->model('m_sms');
+		$numbers=$this->m_sms->get_group_members($id);
+            
+		echo json_encode($numbers);
+                exit;
+             }
+	}
+        
+         public function get_logs()
+	{   
+             if($this->hasPermission(26)){
+             $this->load->model('m_sms');
+		$this->data['smsLogs']=$this->m_sms->get_sms_log($this->_user_id);
+            $this->data['subpage']='sms/logs';
+            
+           $this->load->view('index',$this->data);
+             }
+          else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		
+	}
+        
+        public function send_sms()
+	{   
+             if($this->hasPermission(27)){
+             $this->load->model('m_sms');
+            $this->data['subpage']='sms/send';
+            $this->data['myGroups']=$this->m_sms->get_group($this->_user_id,true);
+            $this->data['senders']=$this->m_sms->get_senders();
+            $this->data['groupMembers']=$this->m_sms->get_members($this->_user_id,true);
+           $this->load->view('index',$this->data);
+             }
+          else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		
+	}
+        
+          public function do_send()
+         {   
+ 
+                  
+             if(!$this->input->post('Text') || !$this->input->post('rec_numbers')){
+                 $this->data['status']=$this->ResponseState(FALSE,'يرجى التأكد من ادخال رقم الجوال ونص الرسالة');
+             }
+          else if($this->hasPermission(27)){
+              
+			$res = $this->send($this->input->post('sender_name'),
+                                $this->input->post('rec_numbers'),$this->input->post('Text'),$this->_user_id); 
+			if($res){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الارسال بنجاح'.', الرصيد المستهلك '.$res);
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
+                exit;
+             
+             
+          
+         }
+         
+             public function send($sender_name, $recipient,$message,$acc_id)
+         {
+        
+                 
+        $response = false;
+        $message = urldecode($message);
+                      
+           $unicode =(preg_match('/[أ-ي]/ui', $message)?"2":"0");
+                   
+        
+            $msgCount= mb_strlen($message);
+            
+           
+            
+             if($unicode==2){
+            if ($msgCount <= 70) {
+                $msgCount = 1;
+            }
+            else if ($msgCount >= 268) {
+                
+                $message = substr($message, 0, 481);
+                $msgCount = 4;
+               
+            }
+            else {
+
+                $msgCount += (67 - 1);
+                $msgCount -= ($msgCount % 67);
+                $msgCount /= 67;
+            }
+             
+             }
+
+                     
+             
+             else {
+             if ($msgCount <= 160) {
+                $msgCount = 1;
+            }
+            else if ($msgCount >= 459) {
+                $message = substr($message, 0, 459);
+                $msgCount = 3;
+            }
+            else {
+
+                $msgCount += (153 - 1);
+                $msgCount -= ($msgCount % 153);
+                $msgCount /= 153;
+            }
+            
+
+             }
+               
+
+            
+        
+
+        
+        /***********************************************************************************************/
+        // calculate required credits
+        
+        
+        $recipient_array = array();
+        
+        if (preg_match("/,/", $recipient)) {
+            $numbers = explode(",", $recipient);
+
+            
+            
+            foreach ($numbers as $element) {
+                
+                        if (substr( $element, 0, 5 ) === "97259" && strlen($element)==12) {
+                            $recipient_array[] = $element;
+                        }
+                        else if (substr( $element, 0, 3 ) === "059" && strlen($element)==10) {
+                            $element = substr($element,1);
+                            $recipient_array[] = "972".$element;
+                        }
+                
+            
+
+               
+            }
+       
+
+                }
+                
+                else {
+                   
+if (substr( $recipient, 0, 5 ) === "97259" && strlen($recipient)==12) {
+                            $recipient_array[] = $recipient;
+                        }
+                        else if (substr( $recipient, 0, 3 ) === "059" && strlen($recipient)==10) {
+                            $recipient = substr($recipient,1);
+                            $recipient_array[] = "972".$recipient;
+                        }
+                
+            
+
+             
+         
+                         
+        }
+
+        $recipient_array = array_unique($recipient_array);
+        
+        
+        $required_credits = ($msgCount) * count($recipient_array);
+        
+       
+
+
+        /***********************************************************************************************/
+        // check available credits of the account
+        $account_credits = 0;
+        /*$this->load->model('m_sms');
+        $this->m_sms->get_group($this->_user_id,true);*/
+        /*$url = "http://www.hotsms.ps/getbalance.php?"
+                . "user_name=gccmnt2&user_pass=5159134";
+                 
+            $ch = curl_init($url);
+        //initialize curl handle
+
+            curl_setopt($ch, CURLOPT_URL, $url); //set the url
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            curl_setopt($ch, CURLOPT_POST, 0); //set POST method
+
+            $response4 = curl_exec($ch);
+
+
+            curl_close($ch);  */          
+          //echo $send_url."<br/>";
+          $account_credits = 100;//$response4;
+        //***********************************************/
+        
+         if($required_credits>$account_credits){
+            return false;
+        }
+        
+        /***********************************************************************************************/
+        // send noti for remain credits
+        
+        
+        /***********************************************************************************/
+        // send or insert into send sms table - queue
+        if(count($recipient_array)==0){
+            return false;
+        }
+        
+        //// queu large messages
+        /********************************************/
+        
+            $bulk_messages = true;
+            $api_response=101;
+            if($bulk_messages){
+            $recipient_true = implode(",", $recipient_array);
+                   
+
+            $credits = count($recipient_array)*$msgCount;
+            $text = urlencode($message);
+                $url = "http://www.hotsms.ps/sendbulksms.php?"
+                . "user_name=gccmnt2&user_pass=5159134&sender=GccMnt2&mobile=".$recipient_true.""
+                . "&type=".$unicode."&text=".$text;
+                 
+           /* $ch = curl_init($url);
+        //initialize curl handle
+
+            curl_setopt($ch, CURLOPT_URL, $url); //set the url
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+            curl_setopt($ch, CURLOPT_POST, 0); //set POST method
+
+            $api_response = curl_exec($ch);
+
+
+            curl_close($ch);     */       
+          //echo "res".$url."<br/>"; exit;
+                
+            }
+            /// send singles messages
+            
+        
+        
+        if (strpos($api_response, '101') !== FALSE ){
+        
+        
+       /***********************************************************************************/
+        // log sms
+        
+       $data = array(
+            "account_id"=> $this->_user_id, 
+           "rec"=>$recipient_true,
+           "amount"=>$credits,
+           "sms_text"=> $message,
+           "date_sent"=>date("Y-m-d H:i:s"),
+           "sender"=>$sender_name,
+           "status"=>$api_response
+               );
+       $this->load->model('m_sms');
+       if(!$this->m_sms->add_sms_log($data)){
+return false;
+       }
+       
+
+        
+/***************************************************************/        
+            return $credits;
+       
+        }
+        
+        else {
+         $this->data['status']=$this->ResponseState(TRUE,'خطأ في عملية الارسال');
+
+        }
+        
+        
+       echo json_encode($this->data);
+    }
+
         
         
         
