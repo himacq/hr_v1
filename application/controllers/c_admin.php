@@ -486,26 +486,72 @@ class c_admin extends MY_Controller {
 	/************************/
 	
 	/*********************الموظفين************************/
-	
+
 	public function NewJobForEmp($i_emp_number){
 		if($this->hasPermission(22)){
 			$pk_i_id=$this->uri->segment(2);
 			$this->load->model('m_emp');
 			$this->load->model('m_arch');
+			$this->load->model('m_workgroup');
+			$this->load->model('m_emp_job_history');
 			$this->data['managersData']=$this->m_emp->getButMe($pk_i_id);
 			$this->data['selectedempData']=$this->m_emp->getView($pk_i_id);
+			//var_dump($pk_i_id,$this->data['selectedempData']);exit;
 			$this->load->model('m_constant');
 			$this->load->model('m_jobs_cd');
 			$this->data['constantData']=$this->m_constant->getDetails(10);
 			$this->data['contractData']=$this->m_constant->getDetails(11);
 			$this->data['jobData']=$this->m_jobs_cd->get();
+			$this->data['historyData']=$this->m_emp_job_history->get($pk_i_id);
+			$this->data['workgroupData']=$this->m_workgroup->get();
 			$this->data['archData']=$this->m_arch->getArchDetails();
 			$this->data['subpage']='adminCtrPnl/NewJobForEmp';
+
+			//var_dump($this->data['historyData']); exit;
 			$this->load->view('index',$this->data);
 		}
 		else
 			redirect("/","refresh");
-	
+
+	}
+
+	public function LogNewJob()
+	{
+		if($this->hasPermission(22)){
+			$this->load->model('m_emp_job_history');
+			$dataArr=array(
+				'fk_i_emp_id'=>$this->input->post('fk_i_emp_id'),
+				'fk_i_job_id'=>$this->input->post('fk_i_job_id'),
+				'fk_i_branch_cd'=>$this->input->post('fk_i_branch_cd'),
+				'fk_i_contract_cd'=>$this->input->post('fk_i_contract_cd'),
+				'fk_i_dept_cd'=>$this->input->post('fk_i_dept_cd'),
+				'dt_hire_date'=>date('Y-m-d',strtotime($this->input->post('dt_hire_date'))),
+				'dt_end_date'=>date('Y-m-d',strtotime($this->input->post('dt_hire_date'))),
+				'fk_i_manager_id'=>$this->input->post('fk_i_manager_id'),
+				's_adver_number'=>$this->input->post('s_adver_number'),
+				'fk_i_work_group_id'=>$this->input->post('fk_i_work_group_id'),
+				'b_enabled'=>1,
+				'fk_i_create_by'=>$this->data['userdata']['pk_i_id'],
+				'dt_create_date'=>date('Y-m-d h:i:s'),
+			);
+			$res=$this->m_emp_job_history->add($dataArr);
+			$this->load->model('m_emp');
+			$newArray=array(
+					'i_emp_number'=>$this->input->post('fk_i_emp_id'),
+					'b_enabled'=>1,
+				'i_update_by'=>$this->data['userdata']['pk_i_id'],
+				'dt_detete_at'=>date('Y-m-d h:i:s'),);
+			$this->m_emp->update($newArray);
+			if($res>=1){
+				$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الإضافة بنجاح');
+				$this->data['id']=$res;
+			}
+			else
+				$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'انت لا تملك الصلاحية لتنفيذ هذه العملية');
+		echo json_encode($this->data);
 	}
 
 	public function EmployeeFilter(){
@@ -895,6 +941,39 @@ class c_admin extends MY_Controller {
 		echo json_encode($this->data);
 	}
 	/*********************************************/
+
+	/*************************الإجازات*******************/
+
+	public function ApplyJobVacation(){
+		$this->load->model('m_constant');
+		$this->load->model('m_emp');
+		$this->data['vacationData']=$this->m_constant->getDetails(7);
+		$this->data['selectedempData']=$this->m_emp->getView($this->data['userdata']["i_emp_number"]);
+		$this->data['subpage']='adminCtrPnl/ApplyJobVacation';
+		$this->load->view('index',$this->data);
+	}
+
+
+	public function AddVacation(){
+		$this->load->model('m_vacation');
+		$fk_i_emp_id=$this->data['userdata']['pk_i_id'];
+		$dataArr=array(
+			'fk_i_emp_id'=>$fk_i_emp_id,
+			'dt_vacation_from'=>strtotime(date($this->input->post('dt_vacation_from'))),
+			'dt_vacation_to'=>strtotime(date($this->input->post('dt_vacation_to'))),
+			'fk_i_vacation_cd'=>$this->input->post('fk_i_vacation_cd'),
+			's_note'=>$this->input->post('s_note'),
+		);
+		$res=$this->m_workgroup->addDet($dataArr);
+		if($res>=1){
+			$this->data['status']=$this->ResponseState(TRUE,'تمت عملية الإضافة بنجاح');
+			$this->data['id']=$res;
+		}
+		else
+			$this->data['status']=$this->ResponseState(FALSE,'حدث خطأ أثناء تنفيذ العملية');
+		echo json_encode($this->data);
+	}
+	/**************************************************/
 }
 
 /* End of file welcome.php */

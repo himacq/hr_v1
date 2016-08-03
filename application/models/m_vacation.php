@@ -1,5 +1,5 @@
 <?php
-class m_emp extends CI_Model {
+class m_vacation extends CI_Model {
 
 	public function __construct()
 	{
@@ -9,28 +9,21 @@ class m_emp extends CI_Model {
 
 	
 	public function add($data)
-	{    
-		$res=$this->db->insert('t_main_emp_data', $data); 
+	{
+
+		$res=$this->db->insert('t_vacation', $data);
 		if($res)
 		return 1;
 		else
 		return 0;
 	
 	} 
-	
-	public function existsVal($column,$value)
-	{
-		$this->db->select('*');
-		$this->db->from('t_main_emp_data');
-		$this->db->where("".$column."",$value);
-		$q= $this->db->get();
-		return $q->result();	
-	}
+
 	
 	public function del($id)
 	{    
 		$this->db->where('`pk_i_id`',$id);
-		$res=$this->db->delete('t_main_emp_data'); 
+		$res=$this->db->delete('t_vacation');
 		if($res)
 		return 1;
 		else
@@ -39,7 +32,7 @@ class m_emp extends CI_Model {
 	} 
 	public function update($data)
 	{    $this->db->where('i_emp_number',$data['i_emp_number']);
-		$res=$this->db->update('t_main_emp_data', $data); 
+		$res=$this->db->update('t_vacation', $data);
 		if($res)
 		return 1;
 		else
@@ -50,7 +43,7 @@ class m_emp extends CI_Model {
 	function get($id=0)
     {
 		$this->db->select('*');
-		$this->db->from('t_main_emp_data');
+		$this->db->from('t_vacation');
 		if($id>0)
 			$this->db->where('i_emp_number',$id);
 		$q= $this->db->get();
@@ -61,7 +54,7 @@ class m_emp extends CI_Model {
 	function getButMe($id=0)
 	{
 		$this->db->select('*');
-		$this->db->from('main_emp_vw');
+		$this->db->from('t_vacation');
 		if($id>0)
 			$this->db->where("i_emp_number <> $id");
 		$q= $this->db->get();
@@ -71,20 +64,22 @@ class m_emp extends CI_Model {
 	function getView($id=0)
 	{
 		$this->db->select('*');
-		$this->db->from('main_emp_vw');
+		$this->db->from('t_vacation');
 		if($id>0)
 			$this->db->where('pk_i_id',$id);
 		$q= $this->db->get();
 		return $q->result();
 	}
 
-	function login($email,$password)
+	function Exist($fk_i_emp_id,$start,$end)
     {
 		$this->db->select('*');
-		$this->db->from('t_main_emp_data');
-		$this->db->where("s_email",$email);
-		$this->db->where('s_password',$password);
-		$this->db->where('b_enabled','1');
+		$this->db->from('t_vacation');
+		$this->db->where("fk_i_emp_id",$fk_i_emp_id);
+		$this->db->where("(dt_vacation_from <= '$start' and dt_vacation_to >='$start')");
+		$this->db->or_where("(dt_vacation_from <= '$start' and dt_vacation_to >='$end')");
+		$this->db->or_where("(dt_vacation_from >= '$start' and dt_vacation_to >='$end' and dt_vacation_from > '$end' )");
+		$this->db->or_where("(dt_vacation_to >= '$start' and dt_vacation_to <='$end')");
 		$q= $this->db->get();
 		return $q->result();	
 
